@@ -1,0 +1,9 @@
+[submodule "MFTECmd"]
+	path = MFTECmd
+	url = https://github.com/EricZimmerman/MFTECmd
+[submodule "evtx"]
+	path = evtx
+	url = https://github.com/EricZimmerman/evtx
+[submodule "AppCompatCacheParser"]
+	path = AppCompatCacheParser
+	url = https://github.com/EricZimmerman/AppCompatCacheParser

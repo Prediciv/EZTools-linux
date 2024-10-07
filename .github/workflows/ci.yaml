@@ -1,52 +1,56 @@
 name: Publish
 
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
-  setup:
-      runs-on: ubuntu-latest
-      outputs:
-        matrix: ${{ steps.matrix.outputs.value }}
-      steps:
-        - id: matrix
-          run: |
-            echo "value=[\"https://github.com/EricZimmerman/MFTECmd.git\", \"https://github.com/EricZimmerman/evtx.git\", \"https://github.com/EricZimmerman/AppCompatCacheParser.git\"]" >> $GITHUB_OUTPUT
-        - run: |
-            echo "${{ steps.matrix.outputs.value }}"
   release:
-    needs: [ setup ]
-    runs-on: ubuntu-latest
+    name: Release
     strategy:
       matrix:
-        value: ${{fromJSON(needs.setup.outputs.matrix)}}
+        kind: ['linux']
+        include:
+          - kind: linux
+            os: ubuntu-latest
+            target: linux-x64
+    runs-on: ${{ matrix.os }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 3.1.101
 
       - name: Build
         shell: bash
         run: |
-          timestamp=$(date +%s)
-          toolname=$(echo "${{ matrix.value }}" |  rev | cut -d'.' -f 2 | rev | rev | cut -d'/' -f 1 | rev)
-          release_name="$toolname-$timestamp"
+          tag=$(git describe --tags --abbrev=0)
+          release_name="eztools-$tag-${{ matrix.target }}"
           
-          git clone "${{ matrix.value }}"
-          cd $toolname
-          # Build everything
-          dotnet publish . --configuration Release --os linux --framework net6.0 --output "$release_name" -p:PublishSingleFile=true --self-contained false
+          mkdir out
+          git fetch --recurse-submodules
+
+          for dir in "AppCompatCacheParser" "MFTECmd" "evtx"
+          do
+            cd $dir
+            dotnet publish . --configuration Release --os linux --framework net6.0 --output out -p:PublishSingleFile=true --self-contained false
+            mv out/* ../out
+            cd -
+          done
 
           # Pack files
-          tar czvf "${release_name}.tar.gz" "$release_name"
+          tar czvf "${release_name}.tar.gz" out
 
           # Delete output directory
-          rm -r "$release_name"
+          rm -r out
 
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: "*"
+          files: "*.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
