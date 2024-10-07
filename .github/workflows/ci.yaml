@@ -27,6 +27,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
           tag=$(git describe --tags --abbrev=0)
           release_name="eztools-$tag-${{ matrix.target }}"
           
