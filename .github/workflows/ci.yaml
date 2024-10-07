@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+        with:
+          submodules: 'true'
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
@@ -31,7 +33,6 @@ jobs:
           release_name="eztools-$tag-${{ matrix.target }}"
           
           mkdir out
-          git pull --recurse-submodules
 
           for dir in "AppCompatCacheParser" "MFTECmd" "evtx"
           do
