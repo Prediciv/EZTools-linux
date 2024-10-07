@@ -46,7 +46,7 @@ jobs:
           done
 
           # Pack files
-          tar czvf "${release_name}.tar.gz" out
+          tar czvf "${release_name}.tar.gz" -C out .
 
           # Delete output directory
           rm -r out
