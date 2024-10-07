@@ -22,11 +22,11 @@ jobs:
         prev_tag: 'v'
         update_odoo_module_version: true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT}}
     
     - name: Trigger release
       shell: bash
       run: |
         gh workflow run publish.yaml --ref $(git tag --sort=committerdate | grep -E '[0-9]' | tail -1)
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.PAT}}
