@@ -37,7 +37,7 @@ jobs:
           for dir in "AppCompatCacheParser" "MFTECmd" "evtx"
           do
             cd $dir
-            dotnet publish . --configuration Release --os linux --framework net6.0 --output out -p:PublishSingleFile=true --self-contained false
+            dotnet publish . --configuration Release --os linux --framework net6.0 --output out --self-contained false
             mv out/* ../out
             cd -
           done
