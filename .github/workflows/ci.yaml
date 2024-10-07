@@ -1,9 +1,7 @@
 name: Publish
 
 on:
-  push:
-    tags:        
-      - '**'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,6 +18,16 @@ jobs:
             target: linux-x64
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Create an incremental release
+        uses: aurestic/incrementarl-create-release@master
+        with:
+          flag_branch: true
+          message: Bump version
+          prev_tag: 'v'
+          update_odoo_module_version: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v1
         with:
@@ -38,7 +46,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          tag=$(git describe --tags --abbrev=0)
+          tag=$(git tag --sort=committerdate | grep -E '[0-9]' | tail -1)
           release_name="eztools-$tag-${{ matrix.target }}"
           
           mkdir out
