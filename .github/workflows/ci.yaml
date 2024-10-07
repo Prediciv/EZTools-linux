@@ -31,7 +31,7 @@ jobs:
           release_name="eztools-$tag-${{ matrix.target }}"
           
           mkdir out
-          git fetch --recurse-submodules
+          git pull --recurse-submodules
 
           for dir in "AppCompatCacheParser" "MFTECmd" "evtx"
           do
