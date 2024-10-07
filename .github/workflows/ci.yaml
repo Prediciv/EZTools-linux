@@ -1,8 +1,9 @@
 name: Publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:        
+      - '*'
 
 permissions:
   contents: write
@@ -37,7 +38,7 @@ jobs:
           
           mkdir out
 
-          for dir in "AppCompatCacheParser" "MFTECmd" "evtx"
+          for dir in "AppCompatCacheParser" "MFTECmd" "evtx" "AmcacheParser" "PECmd" "Prefetch" "RBCmd" "RECmd" "WxTCmd"
           do
             cd $dir
             dotnet publish . --configuration Release --os linux --framework net6.0 --output out --self-contained false

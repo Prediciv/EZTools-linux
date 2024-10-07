@@ -7,3 +7,21 @@
 [submodule "AppCompatCacheParser"]
 	path = AppCompatCacheParser
 	url = https://github.com/EricZimmerman/AppCompatCacheParser
+[submodule "PECmd"]
+	path = PECmd
+	url = https://github.com/EricZimmerman/PECmd
+[submodule "RECmd"]
+	path = RECmd
+	url = https://github.com/EricZimmerman/RECmd
+[submodule "AmcacheParser"]
+	path = AmcacheParser
+	url = https://github.com/EricZimmerman/AmcacheParser
+[submodule "RBCmd"]
+	path = RBCmd
+	url = https://github.com/EricZimmerman/RBCmd
+[submodule "Prefetch"]
+	path = Prefetch
+	url = https://github.com/EricZimmerman/Prefetch
+[submodule "WxTCmd"]
+	path = WxTCmd
+	url = https://github.com/EricZimmerman/WxTCmd
