@@ -1,0 +1,52 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.matrix.outputs.value }}
+      steps:
+        - id: matrix
+          run: |
+            echo "value=[\"https://github.com/EricZimmerman/MFTECmd.git\", \"https://github.com/EricZimmerman/evtx.git\", \"https://github.com/EricZimmerman/AppCompatCacheParser.git\"]" >> $GITHUB_OUTPUT
+        - run: |
+            echo "${{ steps.matrix.outputs.value }}"
+  release:
+    needs: [ setup ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        value: ${{fromJSON(needs.setup.outputs.matrix)}}
+    steps:
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build
+        shell: bash
+        run: |
+          timestamp=$(date +%s)
+          toolname=$(echo "${{ matrix.value }}" |  rev | cut -d'.' -f 2 | rev | rev | cut -d'/' -f 1 | rev)
+          release_name="$toolname-$timestamp"
+          
+          git clone "${{ matrix.value }}"
+          cd $toolname
+          # Build everything
+          dotnet publish . --configuration Release --os linux --framework net6.0 --output "$release_name" -p:PublishSingleFile=true --self-contained false
+
+          # Pack files
+          tar czvf "${release_name}.tar.gz" "$release_name"
+
+          # Delete output directory
+          rm -r "$release_name"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
