@@ -3,6 +3,9 @@ name: Tagging
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Bump tag
