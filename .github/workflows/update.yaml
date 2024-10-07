@@ -28,3 +28,5 @@ jobs:
       shell: bash
       run: |
         gh workflow run release.yml --ref $(git tag --sort=committerdate | grep -E '[0-9]' | tail -1)
+      env:
+        GH_TOKEN: ${{ github.token }}
